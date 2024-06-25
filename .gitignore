@@ -6,6 +6,18 @@ __pycache__/
 # C extensions
 *.so
 
+# Venv
+.job-posting-assistant
+.job-posting-assistant/
+
+# DS Store
+.DS_Store
+.DS_Store/
+
+# credentials 
+credentials
+credentials/
+
 # Distribution / packaging
 .Python
 build/
