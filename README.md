@@ -1,2 +1,5 @@
 # job-posting-assistant
-Job Posting Assistant
+
+
+
+export PYTHONPATH=$PYTHONPATH:.
