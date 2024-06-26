@@ -1,4 +1,4 @@
-# Job Posting Assistant
+# Gemini powered CareAd Creator
 
 
 export PYTHONPATH=$PYTHONPATH:.
