@@ -2,6 +2,7 @@ from google.generativeai.types import HarmBlockThreshold
 from google.generativeai.types import HarmCategory
 from src.playground.utils import read_api_key
 from src.config.logging import logger
+from src.config.setup import config
 import google.generativeai as genai
 from datetime import datetime
 import streamlit as st
@@ -80,10 +81,8 @@ except:
 
 with open('data/templates/system_instruction.txt', 'r') as f:
     instructions = f.read()
-st.session_state.model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=instructions)
-st.session_state.chat = st.session_state.model.start_chat(
-    history=st.session_state.gemini_history,
-)
+st.session_state.model = genai.GenerativeModel(config.TEXT_GEN_MODEL_NAME, system_instruction=instructions)
+st.session_state.chat = st.session_state.model.start_chat(history=st.session_state.gemini_history)
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
