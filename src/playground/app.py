@@ -82,8 +82,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-
-
 # Chat history
 try:
     st.session_state.messages = joblib.load(
