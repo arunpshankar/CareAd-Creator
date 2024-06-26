@@ -7,8 +7,8 @@ __pycache__/
 *.so
 
 # Venv
-.job-posting-assistant
-.job-posting-assistant/
+.caread-creator
+.caread-creator/
 
 # DS Store
 .DS_Store
