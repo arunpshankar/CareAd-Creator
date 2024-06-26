@@ -21,9 +21,21 @@ AI_AVATAR_ICON = '✨'
 
 # Load past chats (if available)
 try:
-    past_chats: dict = joblib.load('data/history/past_chats_list')
+    past_chats: dict = joblib.load('data/history/past_chats')
 except:
     past_chats = {}
+
+
+# If past_chats loaded from file, update session state
+if 'past_chats' not in st.session_state:
+    st.session_state.past_chats = past_chats
+
+if 'chat_id' not in st.session_state:
+    st.session_state.chat_id = None
+
+# Initialize chat_title if not present in the session state
+if 'chat_title' not in st.session_state:
+    st.session_state.chat_title = "New Session"
 
 # Sidebar allows a list of past chats
 with st.sidebar:
@@ -31,7 +43,9 @@ with st.sidebar:
     st.write('# Past chat sessions')
     #print(st.session_state)
     if st.session_state.get('chat_id') is None:
-        options = [new_chat_id] + list(past_chats.keys())
+        #options = [new_chat_id] + list(past_chats.keys())
+        options = [new_chat_id] + list(st.session_state.past_chats.keys())
+        options = list(dict.fromkeys(options))  # Removes duplicates
         st.session_state.chat_id = st.selectbox(
             label='Choose a session',
             options=options,
@@ -41,10 +55,9 @@ with st.sidebar:
     else:
         # This will happen the 1st time AI response comes in
         options = [new_chat_id, st.session_state.chat_id] + list(past_chats.keys())
-        if len(options) > 2:
-            options = options[0:-1]
+        options = list(dict.fromkeys(options))  # Removes duplicates
 
-        
+        print("2", options)
         st.session_state.chat_id = st.selectbox(
             label='Choose a session',
             options=options,
@@ -88,9 +101,10 @@ for message in st.session_state.messages:
 # React to user input
 if prompt := st.chat_input('Your message here...'):
     # Save this as a chat for later
+    print(past_chats)
     if st.session_state.chat_id not in past_chats.keys():
         past_chats[st.session_state.chat_id] = st.session_state.chat_title
-        joblib.dump(past_chats, 'data/history/past_chats_list')
+        joblib.dump(past_chats, 'data/history/past_chats')
     # Display user message in chat message container
     with st.chat_message('user'):
         st.markdown(prompt)
