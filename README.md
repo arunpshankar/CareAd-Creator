@@ -1,7 +1,6 @@
 # Job Posting Assistant
 
 
-
 export PYTHONPATH=$PYTHONPATH:.
 
 
