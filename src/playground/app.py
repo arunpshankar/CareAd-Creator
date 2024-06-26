@@ -39,7 +39,7 @@ if 'chat_title' not in st.session_state:
 # Sidebar allows a list of past chats
 with st.sidebar:
 
-    st.write('# Past chat sessions')
+    st.write('### Past chat sessions')
     if st.session_state.get('chat_id') is None:
         #options = [new_chat_id] + list(past_chats.keys())
         options = [new_chat_id] + list(st.session_state.past_chats.keys())
@@ -63,7 +63,7 @@ with st.sidebar:
         )
     st.session_state.chat_title = f'session-{st.session_state.chat_id}'
 
-st.write('# CareAd Creator - Powered by Gemini ✨ ')
+st.write('## CareAd Creator - Powered by Gemini ✨ ')
 
 # Chat history
 try:
