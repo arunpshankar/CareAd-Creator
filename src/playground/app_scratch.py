@@ -41,7 +41,6 @@ if 'chat_title' not in st.session_state:
 with st.sidebar:
 
     st.write('# Past chat sessions')
-    #print(st.session_state)
     if st.session_state.get('chat_id') is None:
         #options = [new_chat_id] + list(past_chats.keys())
         options = [new_chat_id] + list(st.session_state.past_chats.keys())
