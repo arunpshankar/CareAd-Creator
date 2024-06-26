@@ -42,9 +42,7 @@ with st.sidebar:
 
     st.write('### Past chat sessions')
     if st.session_state.get('chat_id') is None:
-        #options = [new_chat_id] + list(past_chats.keys())
         options = [new_chat_id] + list(st.session_state.past_chats.keys())
-        #options = list(dict.fromkeys(options))  # Removes duplicates
         seen = set()
         options = [x for x in options if not (x in seen or seen.add(x))]
         st.session_state.chat_id = st.selectbox(
@@ -55,11 +53,8 @@ with st.sidebar:
         )
     else:
         options = [new_chat_id, st.session_state.chat_id] + list(past_chats.keys())
-        options = [new_chat_id, st.session_state.chat_id] + list(past_chats.keys())
         seen = set()
         options = [x for x in options if not (x in seen or seen.add(x))]
-        #options = list(dict.fromkeys(options))  # Removes duplicates
-
         st.session_state.chat_id = st.selectbox(
             label='Choose a session',
             options=options,
@@ -144,7 +139,7 @@ if prompt := st.chat_input('Your message here...'):
                 # Simulate stream of chunk
                 for piece in chunk.text.split(' '):
                     full_response += piece + ' '
-                    time.sleep(0.05)
+                    time.sleep(0.01)
                     # Rewrites with a cursor at end
                     message_placeholder.write(full_response + '▌')
         
