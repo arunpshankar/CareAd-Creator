@@ -44,7 +44,9 @@ with st.sidebar:
     if st.session_state.get('chat_id') is None:
         #options = [new_chat_id] + list(past_chats.keys())
         options = [new_chat_id] + list(st.session_state.past_chats.keys())
-        options = list(dict.fromkeys(options))  # Removes duplicates
+        #options = list(dict.fromkeys(options))  # Removes duplicates
+        seen = set()
+        options = [x for x in options if not (x in seen or seen.add(x))]
         st.session_state.chat_id = st.selectbox(
             label='Choose a session',
             options=options,
@@ -53,7 +55,10 @@ with st.sidebar:
         )
     else:
         options = [new_chat_id, st.session_state.chat_id] + list(past_chats.keys())
-        options = list(dict.fromkeys(options))  # Removes duplicates
+        options = [new_chat_id, st.session_state.chat_id] + list(past_chats.keys())
+        seen = set()
+        options = [x for x in options if not (x in seen or seen.add(x))]
+        #options = list(dict.fromkeys(options))  # Removes duplicates
 
         st.session_state.chat_id = st.selectbox(
             label='Choose a session',
@@ -64,7 +69,25 @@ with st.sidebar:
         )
     st.session_state.chat_title = f'session-{st.session_state.chat_id}'
 
-st.write('## CareAd Creator - Powered by Gemini ✨ ')
+st.markdown("""
+<style>
+.rainbow-text {
+    font-size: 32px;
+    font-weight: bold;
+    background: linear-gradient(to right, #ff6384, #ff9c5f, #ffee54, #48c774, #42aaf5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin-top: 20px;
+}
+</style>
+
+<div class='rainbow-text'>
+    CareAd Creator - Powered by Gemini ✨
+</div>
+""", unsafe_allow_html=True)
+
+
 
 # Chat history
 try:
