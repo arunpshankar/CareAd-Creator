@@ -3,6 +3,7 @@
 ## Overview
 The Gemini-powered CareAd Creator is a simple chat application tailored for streamlined ad creation, specifically catering to care seekers. This tool integrates state-of-the-art Gemini models, allowing users to effortlessly design and manage ad creation through simple and intuitive conversations.
 
+![Chat Interface](img/app.png)
 
 ## Getting Started
 
@@ -13,7 +14,7 @@ Ensure you have Python 3 installed on your system. You can download it from [pyt
 
 1. **Clone the repository**
    ```bash
-   git clone [URL to your repository]
+   git clone https://github.com/arunpshankar/CareAd-Creator.git
    ```
 
 2. **Create a virtual environment**
