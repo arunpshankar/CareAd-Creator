@@ -6,7 +6,6 @@ from datetime import datetime
 import streamlit as st
 import joblib
 import time
-import os
 
 
 API_KEY_FILE_PATH = './credentials/api_key.yml'
@@ -24,6 +23,9 @@ try:
     past_chats: dict = joblib.load('data/history/past_chats')
 except:
     past_chats = {}
+
+with open('data/templates/system_instruction.txt', 'r') as f:
+    instructions = f.read()
 
 
 # If past_chats loaded from file, update session state
@@ -56,7 +58,6 @@ with st.sidebar:
         options = [new_chat_id, st.session_state.chat_id] + list(past_chats.keys())
         options = list(dict.fromkeys(options))  # Removes duplicates
 
-        print("2", options)
         st.session_state.chat_id = st.selectbox(
             label='Choose a session',
             options=options,
@@ -78,13 +79,11 @@ try:
     st.session_state.gemini_history = joblib.load(
         f'data/history/{st.session_state.chat_id}-gemini_messages'
     )
-    # print('old cache')
 except:
     st.session_state.messages = []
     st.session_state.gemini_history = []
-    # print('new_cache made')
 
-st.session_state.model = genai.GenerativeModel('gemini-pro')
+st.session_state.model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=instructions)
 st.session_state.chat = st.session_state.model.start_chat(
     history=st.session_state.gemini_history,
 )
@@ -100,7 +99,6 @@ for message in st.session_state.messages:
 # React to user input
 if prompt := st.chat_input('Your message here...'):
     # Save this as a chat for later
-    print(past_chats)
     if st.session_state.chat_id not in past_chats.keys():
         past_chats[st.session_state.chat_id] = st.session_state.chat_title
         joblib.dump(past_chats, 'data/history/past_chats')
