@@ -1,6 +1,7 @@
 from google.generativeai.types import HarmBlockThreshold
 from google.generativeai.types import HarmCategory
 from src.playground.utils import read_api_key
+from src.config.logging import logger
 import google.generativeai as genai
 from datetime import datetime
 import streamlit as st
@@ -23,10 +24,6 @@ try:
     past_chats: dict = joblib.load('data/history/past_chats')
 except:
     past_chats = {}
-
-with open('data/templates/system_instruction.txt', 'r') as f:
-    instructions = f.read()
-
 
 # If past_chats loaded from file, update session state
 if 'past_chats' not in st.session_state:
@@ -54,7 +51,6 @@ with st.sidebar:
             placeholder='_',
         )
     else:
-        # This will happen the 1st time AI response comes in
         options = [new_chat_id, st.session_state.chat_id] + list(past_chats.keys())
         options = list(dict.fromkeys(options))  # Removes duplicates
 
@@ -65,13 +61,11 @@ with st.sidebar:
             format_func=lambda x: past_chats.get(x, 'Start a new session' if x != st.session_state.chat_id else st.session_state.chat_title),
             placeholder='_',
         )
-    # Save new chats after a message has been sent to AI
-    # TODO: Give user a chance to name chat
     st.session_state.chat_title = f'session-{st.session_state.chat_id}'
 
 st.write('# CareAd Creator - Powered by Gemini ✨ ')
 
-# Chat history (allows to ask multiple questions)
+# Chat history
 try:
     st.session_state.messages = joblib.load(
         f'data/history/{st.session_state.chat_id}-st_messages'
@@ -83,6 +77,9 @@ except:
     st.session_state.messages = []
     st.session_state.gemini_history = []
 
+
+with open('data/templates/system_instruction.txt', 'r') as f:
+    instructions = f.read()
 st.session_state.model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=instructions)
 st.session_state.chat = st.session_state.model.start_chat(
     history=st.session_state.gemini_history,
@@ -90,10 +87,7 @@ st.session_state.chat = st.session_state.model.start_chat(
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
-    with st.chat_message(
-        name=message['role'],
-        avatar=message.get('avatar'),
-    ):
+    with st.chat_message(name=message['role'], avatar=message.get('avatar')):
         st.markdown(message['content'])
 
 # React to user input
@@ -126,7 +120,6 @@ if prompt := st.chat_input('Your message here...'):
             # Streams in a chunk at a time
             for chunk in response:
                 # Simulate stream of chunk
-                # TODO: Chunk missing `text` if API stops mid-stream ("safety"?)
                 for piece in chunk.text.split(' '):
                     full_response += piece + ' '
                     time.sleep(0.05)
@@ -136,7 +129,7 @@ if prompt := st.chat_input('Your message here...'):
             # Write full message with placeholder
             message_placeholder.write(full_response)
     except Exception as e:
-        pass
+        logger.error(e)
 
     # Add assistant response to chat history
     st.session_state.messages.append(
@@ -150,5 +143,4 @@ if prompt := st.chat_input('Your message here...'):
 
     # Save to file
     joblib.dump(st.session_state.messages, f'data/history/{st.session_state.chat_id}-st_messages')
-
     joblib.dump(st.session_state.gemini_history, f'data/history/{st.session_state.chat_id}-gemini_messages')
