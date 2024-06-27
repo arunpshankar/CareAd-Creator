@@ -37,7 +37,7 @@ if 'chat_id' not in st.session_state:
 if 'chat_title' not in st.session_state:
     st.session_state.chat_title = "New Session"
 
-# Sidebar allows a list of past chats
+# Sidebar 
 with st.sidebar:
 
     st.write('### Past chat sessions')
@@ -84,12 +84,8 @@ st.markdown("""
 
 # Chat history
 try:
-    st.session_state.messages = joblib.load(
-        f'data/history/{st.session_state.chat_id}-st_messages'
-    )
-    st.session_state.gemini_history = joblib.load(
-        f'data/history/{st.session_state.chat_id}-gemini_messages'
-    )
+    st.session_state.messages = joblib.load(f'data/history/{st.session_state.chat_id}-st_messages')
+    st.session_state.gemini_history = joblib.load(f'data/history/{st.session_state.chat_id}-gemini_messages')
 except:
     st.session_state.messages = []
     st.session_state.gemini_history = []
@@ -116,15 +112,16 @@ if prompt := st.chat_input('Your message here...'):
         st.markdown(prompt)
     # Add user message to chat history
     st.session_state.messages.append(dict(role='user', content=prompt))
-    # Send message to AI
+    
 
+    # Safety filters
     safety_settings = { 
     HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
     HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
     HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
     HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE
     }
-
+    # Send message to AI
     response = st.session_state.chat.send_message(prompt, safety_settings=safety_settings, stream=True)
 
     # Display assistant response in chat message container
